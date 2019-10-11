@@ -20,13 +20,4 @@ public class ConnectionManager {
 		}
 		return conn;
 	}
-	
-	public static void close(Connection conn) {
-		try {
-			if(conn!=null)
-				conn.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
 }

@@ -1,0 +1,31 @@
+1. 테이블스페이스 리스트 페이징
+2. mvc2모델 양식 맞추기
+3. 예외처리?
+4. auto extend 옵션?
+------------------------------------- 경로
+show parameter db_create_file_dest;
+-- 기본 경로
+alter system set db_create_file_dest='C:\oraclexe\app\oracle\oradata\XE';
+-- 경로 값 설정
+select value
+from v$parameter 
+where name = 'db_create_file_dest';
+-- 경로 가져올때
+------------------------------------- 생성
+CREATE SMALLFILE TABLESPACE "AAA"
+DATAFILE '/u01/app/oracle/oradata/orcl/name' SIZE 1M
+, '/u01/app/oracle/oradata/orcl/name2' SIZE 1M
+LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO
+ALTER TABLESPACE "AAA" READ ONLY   -> 생성하면서 상태 read only로 만들 때
+
+--------------------------------------
+create or replace PROCEDURE p_ts_list (t_list out SYS_REFCURSOR)
+IS
+BEGIN
+  OPEN t_list FOR
+    select a.tablespace_name, a.status, sum(b.bytes/1024/1024) as total, sum(c.bytes/1024/1024) as free
+    from dba_tablespaces a, dba_data_files b, dba_free_space c
+    where a.tablespace_name = b.tablespace_name
+      and a.tablespace_name = c.tablespace_name
+    group by a.tablespace_name, a.status;
+END p_ts_list;

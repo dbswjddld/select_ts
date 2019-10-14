@@ -17,8 +17,8 @@
 		$("#updbtn").click(check);
 		
 		$("#trupd").click(function(){
-			$(this).parent().parent().attr("style","background:gold");
-			var $sizetd = $(this).parents().parents().find("td:eq(1)");
+			$(this).parent().parent().find("td:eq(1)").attr("style","background:gold");
+			var $sizetd = $(this).parent().parent().find("td:eq(1)");
 			var oldValue = $(sizetd).text(); // 기존 size
 			
 			var $sizeunit = $("<select>").attr("id","sizeunit")
@@ -39,7 +39,7 @@
 			 */// 버튼 td 수정
 			
 			$("#trupd").click(function(){
-				var filename = $(this).parents().parents().find("td[id='filename']").text();
+				var filename = $(this).parent().parent().find("td[id='filename']").text();
 				var size = $(sizetd).find("#size").val();
 				var sizeunit = $(sizetd).find("#sizeunit").val();
 				console.log(filename);

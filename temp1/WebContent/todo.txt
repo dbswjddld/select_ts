@@ -2,6 +2,8 @@
 2. mvc2모델 양식 맞추기
 3. 예외처리?
 4. auto extend 옵션?
+5. 상태 offline인건 목록에 안뜬다 ㅜㅜ
+6. offline -> read write -> read only
 ------------------------------------- 경로
 show parameter db_create_file_dest;
 -- 기본 경로
@@ -11,6 +13,9 @@ select value
 from v$parameter 
 where name = 'db_create_file_dest';
 -- 경로 가져올때
+------------------------------------- 데이터파일 조회
+file번호로 조인
+
 ------------------------------------- 생성
 CREATE SMALLFILE TABLESPACE "AAA"
 DATAFILE '/u01/app/oracle/oradata/orcl/name' SIZE 1M
@@ -23,9 +28,11 @@ create or replace PROCEDURE p_ts_list (t_list out SYS_REFCURSOR)
 IS
 BEGIN
   OPEN t_list FOR
-    select a.tablespace_name, a.status, sum(b.bytes/1024/1024) as total, sum(c.bytes/1024/1024) as free
-    from dba_tablespaces a, dba_data_files b, dba_free_space c
-    where a.tablespace_name = b.tablespace_name
-      and a.tablespace_name = c.tablespace_name
-    group by a.tablespace_name, a.status;
+    select a.tablespace_name, a.status, a.contents, sum(b.bytes/1024/1024) as total, sum(c.bytes/1024/1024) as free
+    from dba_tablespaces a
+    left outer join dba_free_space c
+          on a.tablespace_name = c.tablespace_name
+    left outer join dba_data_files b 
+          on a.tablespace_name = b.tablespace_name
+    group by a.tablespace_name, a.status, a.contents;
 END p_ts_list;

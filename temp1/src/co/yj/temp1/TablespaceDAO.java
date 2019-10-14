@@ -23,7 +23,25 @@ public class TablespaceDAO {
 			e.printStackTrace();
 		}
 	}
-
+	//////////////// 테이블스페이스 수정
+	public void update(String[] sql) {
+		int num = sql.length;
+		try {
+			conn = ConnectionManager.connect();
+			for(int i = 0; i < num; i++) {
+				System.out.println(sql[i]);
+				psmt = conn.prepareStatement(sql[i]);
+				psmt.execute();
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		
+	}
+	
+	
 	//////////////// 테이블스페이스 생성
 	public void create(String sql) {
 		try {
@@ -51,6 +69,7 @@ public class TablespaceDAO {
 				dto = new TablespaceDTO();
 				dto.setTablespaceName(rs.getString("tablespace_name"));
 				dto.setStatus(rs.getString("status"));
+				dto.setContents(rs.getString("contents"));
 				dto.setTotal(rs.getInt("total"));
 				dto.setFree(rs.getInt("free"));
 				dto.setUsed(dto.getTotal() - dto.getFree());
@@ -79,4 +98,25 @@ public class TablespaceDAO {
 			close();
 		}
 	}
+	
+	//////////////// 테이블스페이스 정보 (수정 폼 가져오기)
+	public TablespaceDTO select(String tsName) {
+		TablespaceDTO ts = null;
+		String sql = "SELECT status FROM dba_tablespaces WHERE tablespace_name = '" + tsName + "'";
+		try {
+			conn = ConnectionManager.connect();
+			psmt = conn.prepareStatement(sql);
+			rs = psmt.executeQuery();
+			if(rs.next()) {
+				ts = new TablespaceDTO();
+				ts.setStatus(rs.getString("status"));
+				ts.setTablespaceName(tsName);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			close();
+		}
+		return ts;
+	};
 }

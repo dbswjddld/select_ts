@@ -12,6 +12,11 @@
 		$('input:radio[name=tablespace]').eq(0).attr("checked", true);
 		// 첫 번째 라디오 자동 체크
 		
+		$("#updbtn").click(function(){
+			$("#frm").attr("action", "TSupdateForm.do");
+			$("#frm").submit();
+		});
+		
 		$("#delbtn").click(function(){
 			var reply = confirm("삭제하시겠습니까?");
 			if (reply == true) { // 확인
@@ -37,6 +42,7 @@
 			<th></th>
 			<th>tablespace name</th>
 			<th>status</th>
+			<th>contents</th>
 			<th>total MB</th>
 			<th>used MB</th>
 			<th>free MB</th>
@@ -49,6 +55,7 @@
 				<td><input type = "radio" id = "ts_radio" name = "tablespace" value = "${dto.getTablespaceName()}"></td>
 				<td>${dto.getTablespaceName()}</td>
 				<td>${dto.getStatus()}</td>
+				<td>${dto.getContents()}</td>
 				<td>${dto.getTotal()}</td>
 				<td>${dto.getUsed()}</td>
 				<td>${dto.getFree()}</td>
@@ -57,6 +64,7 @@
 		</c:forEach>
 	</tbody>
 	</table>
+	<input id = "updbtn" type = "button" value = "수정">
 	<input id = "delbtn" type = "button" value = "삭제">
 	<input id = "crebtn" type = "button" value = "생성">
 	<div id = "show"></div>

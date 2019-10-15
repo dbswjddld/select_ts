@@ -26,7 +26,23 @@
 		datafile = datafile.substring(0, datafile.length-1); // 맨 마지막 , 제거
 		// 데이터파일 입력한 값을 '경로\데이터파일명.dbf' 용량, ... 로 양식에 맞게 만들어 datafile의 값에 저장
 		
-		var sql = "create tablespace " + tsname + " datafile " + datafile + " LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO";
+		var type = $("#type:checked").val(); // 타입 뭘 체크했는지 확인
+		
+		var tstype = "";
+		var filetype = " datafile ";
+		var plus = " LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO";
+		// permanent 타입인 경우
+		
+		if(type == 'temporary') { // temporary 타입인경우
+			tstype = "temporary ";
+			filetype = " tempfile ";
+			plus = " EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M";
+		} else if (type == 'undo') { // undo 타입인경우
+			tstype = "undo ";
+			plus = " RETENTION NOGUARANTEE";
+		}
+		
+		var sql = "create " + tstype + "tablespace " + tsname + filetype + datafile + plus;
 		$("#sql").val(sql);
 		console.log(sql);
 	}
@@ -62,6 +78,11 @@
 	<input type = "hidden" id = "sql" name = "sql">
 		<h1>테이블 스페이스</h1>
 		테이블 스페이스 이름 <input type = "text" id = "tsname" required> <br>
+		타입
+		<input type = "radio" id = "type" name = "type" value = "permanent" checked> Permanent
+		<input type = "radio" id = "type" name = "type" value = "temporary"> Temporary
+		<input type = "radio" id = "type" name = "type" value = "undo"> Undo
+		
 		<h1>데이터 파일</h1>
 		
 		<table border = "1" id = "tb1">

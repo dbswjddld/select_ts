@@ -16,6 +16,7 @@
 			$("#frm").attr("action", "TSupdateForm.do");
 			$("#frm").submit();
 		});
+		// 수정 버튼 클릭
 		
 		$("#delbtn").click(function(){
 			var reply = confirm("삭제하시겠습니까?");

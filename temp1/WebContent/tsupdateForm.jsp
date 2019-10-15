@@ -9,14 +9,27 @@
 	<script src= "https://code.jquery.com/jquery-3.4.1.js"></script>
 	<script>
 	var sql = "";
+	var tstype = "${ts.getContents()}";
+	var dftype;
+	
 	
 	$(function(){
+		if(tstype = "TEMPORARY") {
+			dftype = "tempfile";
+			$("input[name='status']").attr("disabled",true);
+		} else {
+			dftype = "datafile";
+		}
+		
 		dfChk();
 		statusChk();
 		$('input:radio[name=datafile]').eq(0).attr("checked", true);
 		$("#updbtn").click(check);
 		$(".trupd").click(trEdit);		// 기존 데이터파일 수정하기
 		$("#addbtn").click(trAdd);
+		
+		if(tstype == "UNDO")
+			$("#readonly").attr("disabled", true);
 	});
 	function trAdd(){ // 행 추가
 		$("#addbtn").attr("disabled", true);
@@ -39,7 +52,7 @@
 				);
 	} // 행 추가
 	
-	function trAddOk(){
+	function trAddOk(){ // 추가 완료
 		$("#addbtn").attr("disabled",false); // tr 추가 버튼 활성화
 		
 		var filename = $("#newFilename").val();
@@ -47,7 +60,9 @@
 		var sizeunit = $("#newSizeunit").val();
 		var tablespace = "${ts.getTablespaceName()}";
 		
-		sql += "ALTER TABLESPACE " + tablespace + " ADD DATAFILE '" + filename + "' SIZE " + size + sizeunit + ";";
+		
+		
+		sql += "ALTER TABLESPACE " + tablespace + " ADD " + dftype + " '" + filename + "' SIZE " + size + sizeunit + ";";
 		
 		$("tr:last").remove();
 		var $tr = $("<tr>").append($("<td>").text(filename))
@@ -93,7 +108,7 @@
 			var sizeunit = $("#sizeunit").val();
 			var filename = $(this).parent().parent().find("td[id='filename']").text();
 			
-			sql += "ALTER DATABASE DATAFILE '" + filename + "' RESIZE " + size + sizeunit + ";";
+			sql += "ALTER DATABASE " + dftype + " '" + filename + "' RESIZE " + size + sizeunit + ";";
 			
 			$(".trupd").attr("disabled", false); // 다른 행의 '용량수정' 버튼 활성화
 			
@@ -192,6 +207,9 @@
 		<input type = "hidden" name = "sql" id = "sql">
 		<h1>테이블 스페이스</h1>
 		이름 <input type = "text" id = "tsname" value = "${ts.getTablespaceName()}">
+		<br>
+		타입 ${ts.getContents()}
+		<br>
 		상태  
 			<input type = "radio" name = "status" id = "online" value = "read write">
 				<label for = "online">read write</label>

@@ -29,9 +29,20 @@ public class DatafileDAO {
 		ArrayList<DatafileDTO> list = new ArrayList<DatafileDTO>();
 		DatafileDTO df = null;
 		String sql = "select file_name, tablespace_name, bytes/1024/1024 from dba_data_files WHERE tablespace_name = '" + tsName + "'";
+		String sql2 = "select file_name, tablespace_name, bytes/1024/1024 from dba_temp_files WHERE tablespace_name = '" + tsName + "'";
+
 		try {
 			conn = ConnectionManager.connect();
 			psmt = conn.prepareStatement(sql);
+			rs = psmt.executeQuery();
+			while(rs.next()) {
+				df = new DatafileDTO();
+				df.setTablespaceName(tsName);
+				df.setFileName(rs.getString("file_name"));
+				df.setBytes(rs.getInt("bytes/1024/1024"));
+				list.add(df);
+			}
+			psmt = conn.prepareStatement(sql2);
 			rs = psmt.executeQuery();
 			while(rs.next()) {
 				df = new DatafileDTO();

@@ -103,7 +103,7 @@ public class TablespaceDAO {
 	//////////////// 테이블스페이스 정보 (수정 폼 가져오기)
 	public TablespaceDTO select(String tsName) {
 		TablespaceDTO ts = null;
-		String sql = "SELECT status FROM dba_tablespaces WHERE tablespace_name = '" + tsName + "'";
+		String sql = "SELECT status, contents FROM dba_tablespaces WHERE tablespace_name = '" + tsName + "'";
 		try {
 			conn = ConnectionManager.connect();
 			psmt = conn.prepareStatement(sql);
@@ -111,6 +111,7 @@ public class TablespaceDAO {
 			if(rs.next()) {
 				ts = new TablespaceDTO();
 				ts.setStatus(rs.getString("status"));
+				ts.setContents(rs.getString("contents"));
 				ts.setTablespaceName(tsName);
 			}
 		} catch (SQLException e) {

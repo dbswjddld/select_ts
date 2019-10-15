@@ -22,6 +22,17 @@ DATAFILE '/u01/app/oracle/oradata/orcl/name' SIZE 1M
 , '/u01/app/oracle/oradata/orcl/name2' SIZE 1M
 LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO
 ALTER TABLESPACE "AAA" READ ONLY   -> 생성하면서 상태 read only로 만들 때
+
+
+CREATE SMALLFILE TEMPORARY TABLESPACE "TEST"
+TEMPFILE '/u01/app/oracle/oradata/orcl/tt' SIZE 100M
+EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M
+>>>> temporary tablespace 생성
+
+CREATE SMALLFILE UNDO TABLESPACE "TEST"
+DATAFILE '/u01/app/oracle/oradata/orcl/test' SIZE 100M
+RETENTION NOGUARANTEE
+>>>> undo tablespace
 -------------------------------------- 검색 프로시저★★★★★★★
 create or replace PROCEDURE p_ts_list_search (p_name in varchar2, t_list out SYS_REFCURSOR)
 IS

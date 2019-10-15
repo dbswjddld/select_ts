@@ -22,8 +22,21 @@ DATAFILE '/u01/app/oracle/oradata/orcl/name' SIZE 1M
 , '/u01/app/oracle/oradata/orcl/name2' SIZE 1M
 LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO
 ALTER TABLESPACE "AAA" READ ONLY   -> 생성하면서 상태 read only로 만들 때
-
---------------------------------------
+-------------------------------------- 검색 프로시저★★★★★★★
+create or replace PROCEDURE p_ts_list_search (p_name in varchar2, t_list out SYS_REFCURSOR)
+IS
+BEGIN
+  OPEN t_list FOR
+    select a.tablespace_name, a.status, a.contents, sum(b.bytes/1024/1024) as total, sum(c.bytes/1024/1024) as free
+    from dba_tablespaces a
+    left outer join dba_free_space c
+          on a.tablespace_name = c.tablespace_name
+    left outer join dba_data_files b 
+          on a.tablespace_name = b.tablespace_name
+    where a.tablespace_name like '%' || p_name || '%'
+    group by a.tablespace_name, a.status, a.contents;
+END p_ts_list_search;
+-------------------------------------- 리스트 출력 프로시저 --> 이제 안씀
 create or replace PROCEDURE p_ts_list (t_list out SYS_REFCURSOR)
 IS
 BEGIN

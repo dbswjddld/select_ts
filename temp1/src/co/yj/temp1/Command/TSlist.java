@@ -16,11 +16,16 @@ public class TSlist implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+		String keyword = request.getParameter("keyword");
+		if(keyword == null) keyword = "";
+		else keyword = keyword.toUpperCase();
+		
 		TablespaceDAO dao = new TablespaceDAO();
 		ArrayList<TablespaceDTO> list = new ArrayList<>();
-		list = dao.select();
+		list = dao.search(keyword);
 		
 		request.setAttribute("list", list);
+		request.setAttribute("keyword", keyword);
 		String viewPage = "tslist.jsp";
 		HttpRes.forward(request, response, viewPage);
 	}

@@ -31,11 +31,20 @@
 			$("#frm").submit();
 		});
 		// 생성 버튼 클릭
+		
+		$("#searchbtn").click(function(){
+			$("#keyword").val($("#search").val());
+			$("#frm").attr("action", "TSlist.do");
+			$("#frm").submit();
+		});
 	});
 	</script>
 </head>
 <body>
 	<form id = "frm" method = "post">
+	<input type = "hidden" name = "keyword" id = "keyword" value = "${param.keyword}">
+	<input type = "text" id = "search" placeholder = "검색할 테이블 스페이스의 이름 입력">
+	<input type = "button" id = "searchbtn" value = "검색">
 	<table border = "1">
 	<thead>
 		<tr>

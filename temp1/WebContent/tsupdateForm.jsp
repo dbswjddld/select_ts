@@ -15,47 +15,119 @@
 		statusChk();
 		$('input:radio[name=datafile]').eq(0).attr("checked", true);
 		$("#updbtn").click(check);
-		
-		$("#trupd").click(function(){
-			$(this).parent().parent().find("td:eq(1)").attr("style","background:gold");
-			var $sizetd = $(this).parent().parent().find("td:eq(1)");
-			var oldValue = $(sizetd).text(); // 기존 size
-			
-			var $sizeunit = $("<select>").attr("id","sizeunit")
-							.append($("<option>").val("M").text("MB"))
-							.append($("<option>").val("K").text("KB"))
-							.append($("<option>").val("G").text("GB"))
-							.append($("<option>").val("T").text("TB")); // 용량 단위
-
-			$(sizetd).empty()
-					.append($("<input>").attr("type","text").attr("id","size").val(oldValue))
-					.append($sizeunit);
-			// 용량td 수정
-			
-			/* var $btntd = $(this).parents().find("td[id='btntd']");
-			$(btntd).empty()
-					.append($("<input>").attr("type","button").attr("id","trupd").val("수정완료"))
-					.append($("<input>").attr("type","button").attr("id","trcancel").val("취소하기"));
-			 */// 버튼 td 수정
-			
-			$("#trupd").click(function(){
-				var filename = $(this).parent().parent().find("td[id='filename']").text();
-				var size = $(sizetd).find("#size").val();
-				var sizeunit = $(sizetd).find("#sizeunit").val();
-				console.log(filename);
-				console.log(size);
-				console.log(sizeunit);
-			});
-			// 수정완료 버튼 클릭
-		});
-		// 기존 데이터파일 수정하기
-		
+		$(".trupd").click(trEdit);		// 기존 데이터파일 수정하기
+		$("#addbtn").click(trAdd);
 	});
+	function trAdd(){ // 행 추가
+		$("#addbtn").attr("disabled", true);
 	
-	function trUpdate(filename, size){
-		sql += "ALTER DATABASE DATAFILE '" + filename + "' RESIZE " + size;
+		var $filename =  $("<input>").attr("type","text").attr("id","newFilename"); // 이름 입력칸
+		var $size = $("<input>").attr("type","text").attr("id","newSize"); // 용량 입력칸
+		var $sizeunit = $("<select>").attr("id","newSizeunit")
+									.append($("<option>").val("M").text("MB"))
+									.append($("<option>").val("K").text("KB"))
+									.append($("<option>").val("G").text("GB"))
+									.append($("<option>").val("T").text("TB")); // 용량 단위
+		var $okbtn = $("<input>").attr("type","button").attr("id","okbtn").val("수정완료").click(trAddOk);
+		var $canbtn = $("<input>").attr("type","button").attr("id","canbtn").val("취소").click(trAddCan);
+
+		$("#tb1").append($("<tr>")
+					.append($("<td>").append($filename).append("<br>").append("경로\\파일이름.dbf 형식으로 작성하시오"))
+					.append($("<td>").append($size))
+					.append($("<td>").append($sizeunit))
+					.append($("<td>").append($okbtn).append($canbtn))
+				);
+	} // 행 추가
+	
+	function trAddOk(){
+		$("#addbtn").attr("disabled",false); // tr 추가 버튼 활성화
+		
+		var filename = $("#newFilename").val();
+		var size = $("#newSize").val();
+		var sizeunit = $("#newSizeunit").val();
+		var tablespace = "${ts.getTablespaceName()}";
+		
+		sql += "ALTER TABLESPACE " + tablespace + " ADD DATAFILE '" + filename + "' SIZE " + size + sizeunit + ";";
+		
+		$("tr:last").remove();
+		var $tr = $("<tr>").append($("<td>").text(filename))
+							.append($("<td>").text(size))
+							.append($("<td>").text(sizeunit))
+							.append($("<td>").append($("<input>").attr("type","button").attr("class","trupd").val("용량수정").click(trEdit)));
+		$("#tb1").append($tr);
 	}
-	// 기존의 데이터파일 '수정하기'버튼 클릭
+	
+	function trAddCan(){ // 행 추가를 취소했을 때
+		$("#addbtn").attr("disabled",false);
+		$("tr:last").remove();
+	}
+	
+	function trEdit(){ // 수정하기 버튼 클릭
+		//$(this).parent().parent().find("td:eq(1)");
+		var oldValue = $(this).parent().parent().find("td:eq(1)").text(); // 기존 size
+		
+		var $sizeunit = $("<select>").attr("id","sizeunit")
+						.append($("<option>").val("M").text("MB"))
+						.append($("<option>").val("K").text("KB"))
+						.append($("<option>").val("G").text("GB"))
+						.append($("<option>").val("T").text("TB")); // 용량 단위
+
+		$(this).parent().parent().find("td:eq(1)")
+				.empty()
+				.append($("<input>").attr("type","text").attr("id","size").val(oldValue));
+		// 용량td 수정
+		$(this).parent().parent().find("td:eq(2)")
+				.empty()
+				.append($sizeunit);
+		
+		$(this).parent().parent().find("td:eq(3)")
+				.empty()
+				.append($("<input>").attr("type","button").attr("id","trupd2").val("수정완료"))
+				.append($("<input>").attr("type","button").attr("id","trcancel").val("취소하기"));
+		// 버튼 td 수정
+		 
+		$(".trupd").attr("disabled", true); // 다른 행의 '용량수정' 버튼 비활성화
+		
+		$("#trupd2").click(function(){ // 수정완료 버튼 클릭
+			var size = $(sizetd).find("#size").val();
+			var sizeunit = $("#sizeunit").val();
+			var filename = $(this).parent().parent().find("td[id='filename']").text();
+			
+			sql += "ALTER DATABASE DATAFILE '" + filename + "' RESIZE " + size + sizeunit + ";";
+			
+			$(".trupd").attr("disabled", false); // 다른 행의 '용량수정' 버튼 활성화
+			
+			$(this).parent().parent().find("td:eq(1)")	// 사이즈 열 원래대로 (새로 입력한 값으로 대체)
+					.empty()
+					.text(size);
+			
+			$(this).parent().parent().find("td:eq(2)")
+					.empty()
+					.text(sizeunit);
+			
+			$(this).parent()	// 버튼 열 원래대로
+					.empty()
+					.append($("<input>").attr("type","button").attr("class","trupd").val("용량수정").click(trEdit));
+			
+		});  // 수정완료 버튼 클릭
+		
+		$("#trcancel").click(function(){	// 취소하기 버튼 클릭
+			$(".trupd").attr("disabled", false); // 다른 행의 '용량수정' 버튼 활성화
+			
+			$(this).parent().parent().find("td:eq(1)")	// 사이즈 열 원래대로 (새로 입력한 값으로 대체)
+				.empty()
+				.text(oldValue);
+			
+			$(this).parent().parent().find("td:eq(2)")
+					.empty()
+					.text("M");
+			
+			$(this).parent()	// 버튼 열 원래대로
+				.empty()
+				.append($("<input>").attr("class","trupd").attr("type","button").val("용량수정").click(trEdit));
+
+		});	// 취소하기 버튼 클릭
+	}
 	
 	function statusChk(){
 		switch("${ts.getStatus()}") {
@@ -133,7 +205,8 @@
 			<thead>
 				<tr>
 					<th>이름</th>
-					<th>용량 (MB)</th>
+					<th>용량</th>
+					<th>용량 단위</th>
 					<th></th>
 				</tr>
 			</thead>
@@ -143,9 +216,9 @@
 				<tr>
 					<td id = "filename">${df.getFileName()}</td>
 					<td id = "sizetd">${df.getBytes()}</td>
+					<td>M</td>
 					<td id = "btntd">
-						<input id = "trupd" type = "button" value = "용량수정">
-						<input id = "delbtn" type = "button" value = "삭제">
+						<input class = "trupd" type = "button" value = "용량수정">
 					</td>
 				</tr>
 			</c:forEach>

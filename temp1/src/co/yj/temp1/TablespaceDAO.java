@@ -56,15 +56,16 @@ public class TablespaceDAO {
 	}
 	
 	//////////////// 테이블스페이스 조회
-	public ArrayList<TablespaceDTO> select(){
+	public ArrayList<TablespaceDTO> search(String keyword){
 		ArrayList<TablespaceDTO> list = new ArrayList<TablespaceDTO>();
 		TablespaceDTO dto = null;
 		try {
 			conn = ConnectionManager.connect();
-			cs = conn.prepareCall("{call p_ts_list(?)}");
-			cs.registerOutParameter(1, oracle.jdbc.OracleTypes.CURSOR);
+			cs = conn.prepareCall("{call p_ts_list_search(?,?)}");
+			cs.setString(1, keyword);
+			cs.registerOutParameter(2, oracle.jdbc.OracleTypes.CURSOR);
 			cs.execute();
-			rs = (ResultSet)cs.getObject(1);
+			rs = (ResultSet)cs.getObject(2);
 			while(rs.next()) {
 				dto = new TablespaceDTO();
 				dto.setTablespaceName(rs.getString("tablespace_name"));

@@ -13,6 +13,8 @@ select value
 from v$parameter 
 where name = 'db_create_file_dest';
 -- 경로 가져올때
+C:\ORACLEXE\APP\ORACLE\PRODUCT\11.2.0\SERVER\DATABASE\YJ04.dbf
+-- 경로 지정 안하니까 여기에 저장되었다
 ------------------------------------- 데이터파일 조회
 file번호로 조인
 

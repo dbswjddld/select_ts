@@ -21,7 +21,9 @@
 				return false;
 			}
 			
-			datafile += " '" + path + "\\" + filename + ".dbf' size " + size + sizeunit + ","
+			if(path != "") path += "\\";
+			
+			datafile += " '" + path + filename + ".dbf' size " + size + sizeunit + ","
 		});
 		datafile = datafile.substring(0, datafile.length-1); // 맨 마지막 , 제거
 		// 데이터파일 입력한 값을 '경로\데이터파일명.dbf' 용량, ... 로 양식에 맞게 만들어 datafile의 값에 저장
@@ -49,7 +51,7 @@
 	
 	// 데이터파일 추가
 	function add(){
-		var $path = $("<input>").attr("type","text").attr("id","path").attr("required",true); // 경로 입력칸
+		var $path = $("<input>").attr("type","text").attr("id","path"); // 경로 입력칸
 		var $filename = $("<input>").attr("type","text").attr("id","filename").attr("required",true); // 이름 입력칸
 		var $size = $("<input>").attr("type","text").attr("id","size").attr("required",true); // 용량 입력칸
 		var $sizeunit = $("<select>").attr("id","sizeunit")
@@ -96,7 +98,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><input type = "text" id = "path" required value = "C:\oraclexe\app\oracle\oradata\XE"></td>
+					<td><input type = "text" id = "path" placeholder="경로를 지정하지 않으면 디폴트 경로에 저장됩니다"></td>
 					<td><input type = "text" id = "filename" required></td>
 					<td>
 						<input type = "text" id = "size" required>

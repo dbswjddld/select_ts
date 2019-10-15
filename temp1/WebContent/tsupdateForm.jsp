@@ -14,12 +14,14 @@
 	
 	
 	$(function(){
-		if(tstype = "TEMPORARY") {
+		console.log(tstype);
+		if(tstype == "TEMPORARY") {
+			console.log("temporary 입니다");
 			dftype = "tempfile";
 			$("input[name='status']").attr("disabled",true);
 		} else {
 			dftype = "datafile";
-		}
+		}	// temporary 타입인 경우, 상태변경 불가
 		
 		dfChk();
 		statusChk();
@@ -34,7 +36,8 @@
 	function trAdd(){ // 행 추가
 		$("#addbtn").attr("disabled", true);
 	
-		var $filename =  $("<input>").attr("type","text").attr("id","newFilename"); // 이름 입력칸
+		var $path = $("<input>").attr("type","text").attr("id","newPath"); // 경로 입력칸
+		var $filename = $("<input>").attr("type","text").attr("id","newFilename"); // 이름 입력칸
 		var $size = $("<input>").attr("type","text").attr("id","newSize"); // 용량 입력칸
 		var $sizeunit = $("<select>").attr("id","newSizeunit")
 									.append($("<option>").val("M").text("MB"))
@@ -43,9 +46,10 @@
 									.append($("<option>").val("T").text("TB")); // 용량 단위
 		var $okbtn = $("<input>").attr("type","button").attr("id","okbtn").val("수정완료").click(trAddOk);
 		var $canbtn = $("<input>").attr("type","button").attr("id","canbtn").val("취소").click(trAddCan);
-
+		
+		
 		$("#tb1").append($("<tr>")
-					.append($("<td>").append($filename).append("<br>").append("경로\\파일이름.dbf 형식으로 작성하시오"))
+					.append($("<td>").append("경로 : ").append($path).append("파일명(필수) : ").append($filename))
 					.append($("<td>").append($size))
 					.append($("<td>").append($sizeunit))
 					.append($("<td>").append($okbtn).append($canbtn))
@@ -55,14 +59,15 @@
 	function trAddOk(){ // 추가 완료
 		$("#addbtn").attr("disabled",false); // tr 추가 버튼 활성화
 		
+		var path = $("#newPath").val();
 		var filename = $("#newFilename").val();
 		var size = $("#newSize").val();
 		var sizeunit = $("#newSizeunit").val();
 		var tablespace = "${ts.getTablespaceName()}";
 		
+		if(path != "") path += "\\";
 		
-		
-		sql += "ALTER TABLESPACE " + tablespace + " ADD " + dftype + " '" + filename + "' SIZE " + size + sizeunit + ";";
+		sql += "ALTER TABLESPACE " + tablespace + " ADD " + dftype + " '" + path + filename + ".dbf' SIZE " + size + sizeunit + ";";
 		
 		$("tr:last").remove();
 		var $tr = $("<tr>").append($("<td>").text(filename))

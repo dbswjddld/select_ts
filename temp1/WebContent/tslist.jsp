@@ -43,7 +43,7 @@
 </head>
 <body>
 	<form id = "frm" method = "post">
-	<input type = "hidden" name = "keyword" id = "keyword" value = "${param.keyword}">
+	<input type = "hidden" name = "keyword" id = "keyword">
 	<input type = "text" id = "search" placeholder = "검색할 테이블 스페이스의 이름 입력">
 	<input type = "button" id = "searchbtn" value = "검색">
 	<table border = "1">

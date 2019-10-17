@@ -15,7 +15,6 @@ public class TSdelete implements Command {
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String tsName = request.getParameter("tablespace");
-		System.out.println(tsName);
 		TablespaceDAO dao = new TablespaceDAO();
 		dao.delete(tsName);
 		

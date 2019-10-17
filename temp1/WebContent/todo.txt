@@ -1,9 +1,11 @@
-1. 테이블스페이스 리스트 페이징
-2. mvc2모델 양식 맞추기
-3. 예외처리?
-4. auto extend 옵션?
-5. 상태 offline인건 목록에 안뜬다 ㅜㅜ
-6. offline -> read write -> read only
+o 조회 >>>> 걍 수정 갖다 썼음
+- 경로 지정
+- 리스트에서 temporary tablespace 용량이 안뜬다 -> dba_temp_datas 테이블도 조인 // 리스트 조회 sql구문 다시 작성하기
+- 테이블스페이스 리스트 페이징
+- 예외처리?
+- auto extend 옵션?
+o 상태 offline인건 목록에 안뜬다 ㅜㅜ
+o offline -> read write -> read only
 ------------------------------------- 경로
 show parameter db_create_file_dest;
 -- 기본 경로

@@ -74,7 +74,7 @@
 		</c:forEach>
 	</tbody>
 	</table>
-	<input id = "updbtn" type = "button" value = "수정">
+	<input id = "updbtn" type = "button" value = "조회 및 수정">
 	<input id = "delbtn" type = "button" value = "삭제">
 	<input id = "crebtn" type = "button" value = "생성">
 	<div id = "show"></div>

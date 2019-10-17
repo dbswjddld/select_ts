@@ -12,11 +12,11 @@
 		$('input:radio[name=tablespace]').eq(0).attr("checked", true);
 		// 첫 번째 라디오 자동 체크
 		
-		$("#updbtn").click(function(){
-			$("#frm").attr("action", "TSupdateForm.do");
+		$("#showbtn").click(function(){
+			$("#frm").attr("action", "TSshow.do");
 			$("#frm").submit();
 		});
-		// 수정 버튼 클릭
+		// 조회 및수정 버튼 클릭
 		
 		$("#delbtn").click(function(){
 			var reply = confirm("삭제하시겠습니까?");
@@ -74,7 +74,7 @@
 		</c:forEach>
 	</tbody>
 	</table>
-	<input id = "updbtn" type = "button" value = "조회 및 수정">
+	<input id = "showbtn" type = "button" value = "조회 및 수정">
 	<input id = "delbtn" type = "button" value = "삭제">
 	<input id = "crebtn" type = "button" value = "생성">
 	<div id = "show"></div>

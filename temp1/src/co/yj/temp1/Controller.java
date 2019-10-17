@@ -15,7 +15,7 @@ import co.yj.temp1.Command.TScreateForm;
 import co.yj.temp1.Command.TSdelete;
 import co.yj.temp1.Command.TSlist;
 import co.yj.temp1.Command.TSupdate;
-import co.yj.temp1.Command.TSupdateForm;
+import co.yj.temp1.Command.TSshow;
 import co.yj.temp1.Common.Command;
 
 @WebServlet("/Controller")
@@ -34,7 +34,7 @@ public class Controller extends HttpServlet {
 		map.put("/TSdelete.do", new TSdelete());
 		map.put("/TScreateForm.do", new TScreateForm());
 		map.put("/TScreate.do", new TScreate());
-		map.put("/TSupdateForm.do", new TSupdateForm());
+		map.put("/TSshow.do", new TSshow());
 		map.put("/TSupdate.do", new TSupdate());
 	}
 

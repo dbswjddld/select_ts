@@ -59,7 +59,54 @@ public class TablespaceDAO {
 	public ArrayList<TablespaceDTO> search(String keyword){
 		ArrayList<TablespaceDTO> list = new ArrayList<TablespaceDTO>();
 		TablespaceDTO dto = null;
+		String sql1;
+		String sql2;
 		try {
+			
+			conn = ConnectionManager.connect();
+			cs = conn.prepareCall("{call p_ts_list(?,?)");
+			cs.setString(1, keyword);
+			cs.registerOutParameter(2, oracle.jdbc.OracleTypes.CURSOR);
+			cs.execute();
+			rs = (ResultSet)cs.getObject(2);
+			while(rs.next()) {
+				dto = new TablespaceDTO();
+				dto.setTablespaceName(rs.getString("tablespace_name"));
+				dto.setStatus(rs.getString("status"));
+				dto.setContents(rs.getString("contents"));
+				list.add(dto);
+			}
+			
+			for(TablespaceDTO data : list) {
+				String name = data.getTablespaceName();
+				String contents = data.getContents();
+				if(contents == "TEMPORARY") {
+					System.out.println("temporary 입니다");
+					sql1 = "select sum(bytes/1024/1024) as total "
+							+ "from dba_temp_files where tablespace_name = ? group by tablespace_name";
+					
+					sql2 = "";///////////// temporary tablespace 빈 공간 구하는 법?????
+				} else {
+					sql1 = "select sum(bytes/1024/1024) as total "
+							+ "from dba_data_files where tablespace_name = ? group by tablespace_name";
+					
+					sql2 = "select sum(bytes/1024/1024) as free "
+							+ "from dba_free_space where tablespace_name = ? group by tablespace_name";
+				}
+				psmt = conn.prepareStatement(sql1);
+				psmt.setString(1, name);
+				rs = psmt.executeQuery();
+				if(rs.next()) data.setTotal(rs.getInt("total"));
+				
+				psmt = conn.prepareStatement(sql2);
+				psmt.setString(1, name);
+				rs = psmt.executeQuery();
+				if(rs.next()) data.setFree(rs.getInt("free"));
+
+				data.setUsed(data.getTotal() - data.getFree());
+				data.setUsedPer(((float)data.getUsed()/(float)data.getTotal()*100));
+			}
+			/*
 			conn = ConnectionManager.connect();
 			cs = conn.prepareCall("{call p_ts_list_search(?,?)}");
 			cs.setString(1, keyword);
@@ -77,6 +124,9 @@ public class TablespaceDAO {
 				dto.setUsedPer(((float)dto.getUsed()/(float)dto.getTotal()*100));
 				list.add(dto);
 			}
+			*/
+			
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

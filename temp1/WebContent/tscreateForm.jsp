@@ -28,7 +28,7 @@
 		datafile = datafile.substring(0, datafile.length-1); // 맨 마지막 , 제거
 		// 데이터파일 입력한 값을 '경로\데이터파일명.dbf' 용량, ... 로 양식에 맞게 만들어 datafile의 값에 저장
 		
-		var type = $("#type:checked").val(); // 타입 뭘 체크했는지 확인
+		var type = $("input[name='type']:checked").val(); // 타입 뭘 체크했는지 확인
 		
 		var tstype = "";
 		var filetype = " datafile ";
@@ -81,10 +81,12 @@
 		<h1>테이블 스페이스</h1>
 		테이블 스페이스 이름 <input type = "text" id = "tsname" required> <br>
 		타입
-		<input type = "radio" id = "type" name = "type" value = "permanent" checked> Permanent
-		<input type = "radio" id = "type" name = "type" value = "temporary"> Temporary
-		<input type = "radio" id = "type" name = "type" value = "undo"> Undo
-		
+		<input type = "radio" id = "permanent" name = "type" value = "permanent" checked>
+			<label for = "permanent">Permanent</label>
+		<input type = "radio" id = "temporary" name = "type" value = "temporary">
+			<label for = "temporary">Temporary</label>
+		<input type = "radio" id = "undo" name = "type" value = "undo">
+			<label for = "undo">Undo</label>
 		<h1>데이터 파일</h1>
 		
 		<table border = "1" id = "tb1">

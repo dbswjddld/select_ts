@@ -14,7 +14,7 @@ import co.yj.temp1.TablespaceDTO;
 import co.yj.temp1.Common.Command;
 import co.yj.temp1.Common.HttpRes;
 
-public class TSshow implements Command {
+public class TSupdateForm implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
@@ -31,8 +31,7 @@ public class TSshow implements Command {
 		request.setAttribute("ts", tsdto);
 		request.setAttribute("df", list);
 		
-		String viewPage = "tsshow.jsp";
+		String viewPage = "tsupdateForm.jsp";
 		HttpRes.forward(request, response, viewPage);
 	}
-
 }

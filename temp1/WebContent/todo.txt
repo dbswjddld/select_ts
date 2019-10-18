@@ -1,9 +1,12 @@
-o 조회 >>>> 걍 수정 갖다 썼음
+- 조회 jsp 페이지 수정
+- list에서 행 클릭하면 조회하게
 - 경로 지정
-- 리스트에서 temporary tablespace 용량이 안뜬다 -> dba_temp_datas 테이블도 조인 // 리스트 조회 sql구문 다시 작성하기
+o 리스트에서 temporary tablespace 용량이 안뜬다 -> dba_temp_datas 테이블도 조인 // 리스트 조회 sql구문 다시 작성하기
+  -> dba_temp_free_space
 - 테이블스페이스 리스트 페이징
 - 예외처리?
 - auto extend 옵션?
+- 데이터파일마다 얼마나 사용중인지
 o 상태 offline인건 목록에 안뜬다 ㅜㅜ
 o offline -> read write -> read only
 ------------------------------------- 경로

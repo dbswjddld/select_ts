@@ -80,12 +80,13 @@ public class TablespaceDAO {
 			for(TablespaceDTO data : list) {
 				String name = data.getTablespaceName();
 				String contents = data.getContents();
-				if(contents == "TEMPORARY") {
+				if(contents.equals("TEMPORARY")) {
 					System.out.println("temporary 입니다");
 					sql1 = "select sum(bytes/1024/1024) as total "
 							+ "from dba_temp_files where tablespace_name = ? group by tablespace_name";
 					
-					sql2 = "";///////////// temporary tablespace 빈 공간 구하는 법?????
+					sql2 = "select tablespace_name, sum(free_space/1024/1024) as free "
+							+ "from dba_temp_free_space where tablespace_name = ? group by tablespace_name";
 				} else {
 					sql1 = "select sum(bytes/1024/1024) as total "
 							+ "from dba_data_files where tablespace_name = ? group by tablespace_name";
@@ -106,27 +107,6 @@ public class TablespaceDAO {
 				data.setUsed(data.getTotal() - data.getFree());
 				data.setUsedPer(((float)data.getUsed()/(float)data.getTotal()*100));
 			}
-			/*
-			conn = ConnectionManager.connect();
-			cs = conn.prepareCall("{call p_ts_list_search(?,?)}");
-			cs.setString(1, keyword);
-			cs.registerOutParameter(2, oracle.jdbc.OracleTypes.CURSOR);
-			cs.execute();
-			rs = (ResultSet)cs.getObject(2);
-			while(rs.next()) {
-				dto = new TablespaceDTO();
-				dto.setTablespaceName(rs.getString("tablespace_name"));
-				dto.setStatus(rs.getString("status"));
-				dto.setContents(rs.getString("contents"));
-				dto.setTotal(rs.getInt("total"));
-				dto.setFree(rs.getInt("free"));
-				dto.setUsed(dto.getTotal() - dto.getFree());
-				dto.setUsedPer(((float)dto.getUsed()/(float)dto.getTotal()*100));
-				list.add(dto);
-			}
-			*/
-			
-			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {

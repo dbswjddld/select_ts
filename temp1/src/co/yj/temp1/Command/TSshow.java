@@ -7,26 +7,31 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import co.yj.temp1.DatafileDAO;
+import co.yj.temp1.DatafileDTO;
 import co.yj.temp1.TablespaceDAO;
 import co.yj.temp1.TablespaceDTO;
 import co.yj.temp1.Common.Command;
 import co.yj.temp1.Common.HttpRes;
 
-public class TSlist implements Command {
+public class TSshow implements Command {
 
 	@Override
 	public void execute(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
-		String keyword = request.getParameter("keyword");
-		if(keyword == null) keyword = "";
-		else keyword = keyword.toUpperCase();
+		String tsName = request.getParameter("tablespace");
 		
-		TablespaceDAO dao = new TablespaceDAO();
-		ArrayList<TablespaceDTO> list = new ArrayList<>();
-		list = dao.search(keyword);
+		TablespaceDAO tsdao = new TablespaceDAO();
+		TablespaceDTO tsdto = new TablespaceDTO();
+		tsdto = tsdao.select(tsName);
 		
-		request.setAttribute("list", list);
-		request.setAttribute("keyword", keyword);
-		String viewPage = "tslist.jsp";
+		DatafileDAO dfdao = new DatafileDAO();
+		ArrayList<DatafileDTO> list = new ArrayList<DatafileDTO>();
+		list = dfdao.select(tsName);
+		
+		request.setAttribute("ts", tsdto);
+		request.setAttribute("df", list);
+		
+		String viewPage = "tsshow.jsp";
 		HttpRes.forward(request, response, viewPage);
 	}
 

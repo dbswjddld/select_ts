@@ -13,7 +13,11 @@
 		// 첫 번째 라디오 자동 체크
 		
 		$("#updbtn").click(function(){
+<<<<<<< HEAD
 			$("#frm").attr("action","TSupdateForm.do");
+=======
+			$("#frm").attr("action", "TSupdateForm.do");
+>>>>>>> branch 'master' of https://github.com/dbswjddld/select_ts.git
 			$("#frm").submit();
 		});
 		// 수정 버튼 클릭
@@ -32,17 +36,41 @@
 			$("#frm").submit();
 		});
 		// 생성 버튼 클릭
+		
+		$("#searchbtn").click(function(){
+			$("#keyword").val($("#search").val());
+			$("#frm").attr("action", "TSlist.do");
+		});
+		// 검색 버튼 클릭
+		
+		$("<tr>").each(function(){
+			$(this).click(function(){
+				$(this).find("input[type='radio']").attr("checked", true);
+				$("#frm").attr("action", "TSshow.do");
+				$("#frm").submit();
+			});
+		});
+		// 테이블 행 클릭하면 조회하게 ☆☆☆☆수정 필요!!!
+		
+		$("#showbtn").click(function(){
+			$("#frm").attr("action", "TSshow.do");
+			$("#frm").submit();
+		});
 	});
 	</script>
 </head>
 <body>
 	<form id = "frm" method = "post">
+	<input type = "hidden" name = "keyword" id = "keyword">
+	<input type = "text" id = "search" placeholder = "검색할 테이블 스페이스의 이름 입력">
+	<input type = "submit" id = "searchbtn" value = "검색">
 	<table border = "1">
 	<thead>
 		<tr>
 			<th></th>
 			<th>tablespace name</th>
 			<th>status</th>
+			<th>contents</th>
 			<th>total MB</th>
 			<th>used MB</th>
 			<th>free MB</th>
@@ -55,6 +83,7 @@
 				<td><input type = "radio" id = "ts_radio" name = "tablespace" value = "${dto.getTablespaceName()}"></td>
 				<td>${dto.getTablespaceName()}</td>
 				<td>${dto.getStatus()}</td>
+				<td>${dto.getContents()}</td>
 				<td>${dto.getTotal()}</td>
 				<td>${dto.getUsed()}</td>
 				<td>${dto.getFree()}</td>
@@ -66,6 +95,7 @@
 	<input id = "updbtn" type = "button" value = "수정">
 	<input id = "delbtn" type = "button" value = "삭제">
 	<input id = "crebtn" type = "button" value = "생성">
+	<input id = "showbtn" type = "button" value = "조회">
 	<div id = "show"></div>
 	</form>
 </body>

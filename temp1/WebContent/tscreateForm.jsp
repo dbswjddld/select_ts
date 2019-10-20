@@ -21,19 +21,37 @@
 				return false;
 			}
 			
-			datafile += " '" + path + "\\" + filename + ".dbf' size " + size + sizeunit + ","
+			if(path != "") path += "\\";
+			
+			datafile += " '" + path + filename + ".dbf' size " + size + sizeunit + ","
 		});
 		datafile = datafile.substring(0, datafile.length-1); // 맨 마지막 , 제거
 		// 데이터파일 입력한 값을 '경로\데이터파일명.dbf' 용량, ... 로 양식에 맞게 만들어 datafile의 값에 저장
 		
-		var sql = "create tablespace " + tsname + " datafile " + datafile + " LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO";
+		var type = $("input[name='type']:checked").val(); // 타입 뭘 체크했는지 확인
+		
+		var tstype = "";
+		var filetype = " datafile ";
+		var plus = " LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO";
+		// permanent 타입인 경우
+		
+		if(type == 'temporary') { // temporary 타입인경우
+			tstype = "temporary ";
+			filetype = " tempfile ";
+			plus = " EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M";
+		} else if (type == 'undo') { // undo 타입인경우
+			tstype = "undo ";
+			plus = " RETENTION NOGUARANTEE";
+		}
+		
+		var sql = "create " + tstype + "tablespace " + tsname + filetype + datafile + plus;
 		$("#sql").val(sql);
 		console.log(sql);
 	}
 	
 	// 데이터파일 추가
 	function add(){
-		var $path = $("<input>").attr("type","text").attr("id","path").attr("required",true); // 경로 입력칸
+		var $path = $("<input>").attr("type","text").attr("id","path"); // 경로 입력칸
 		var $filename = $("<input>").attr("type","text").attr("id","filename").attr("required",true); // 이름 입력칸
 		var $size = $("<input>").attr("type","text").attr("id","size").attr("required",true); // 용량 입력칸
 		var $sizeunit = $("<select>").attr("id","sizeunit")
@@ -62,6 +80,13 @@
 	<input type = "hidden" id = "sql" name = "sql">
 		<h1>테이블 스페이스</h1>
 		테이블 스페이스 이름 <input type = "text" id = "tsname" required> <br>
+		타입
+		<input type = "radio" id = "permanent" name = "type" value = "permanent" checked>
+			<label for = "permanent">Permanent</label>
+		<input type = "radio" id = "temporary" name = "type" value = "temporary">
+			<label for = "temporary">Temporary</label>
+		<input type = "radio" id = "undo" name = "type" value = "undo">
+			<label for = "undo">Undo</label>
 		<h1>데이터 파일</h1>
 		
 		<table border = "1" id = "tb1">
@@ -75,7 +100,7 @@
 			</thead>
 			<tbody>
 				<tr>
-					<td><input type = "text" id = "path" required value = "C:\oraclexe\app\oracle\oradata\XE"></td>
+					<td><input type = "text" id = "path" placeholder="경로를 지정하지 않으면 디폴트 경로에 저장됩니다"></td>
 					<td><input type = "text" id = "filename" required></td>
 					<td>
 						<input type = "text" id = "size" required>

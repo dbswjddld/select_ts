@@ -7,6 +7,15 @@ public class TablespaceDTO {
 	private int free;
 	private float usedPer;
 	private String status;
+	private String contents;
+	
+	
+	public String getContents() {
+		return contents;
+	}
+	public void setContents(String contents) {
+		this.contents = contents;
+	}
 	public String getTablespaceName() {
 		return tablespaceName;
 	}

@@ -1,7 +1,14 @@
-1. 테이블스페이스 리스트 페이징
-2. mvc2모델 양식 맞추기
-3. 예외처리?
-4. auto extend 옵션?
+- 조회 jsp 페이지 수정
+- list에서 행 클릭하면 조회하게
+- 경로 지정
+o 리스트에서 temporary tablespace 용량이 안뜬다 -> dba_temp_datas 테이블도 조인 // 리스트 조회 sql구문 다시 작성하기
+  -> dba_temp_free_space
+- 테이블스페이스 리스트 페이징
+- 예외처리?
+- auto extend 옵션?
+- 데이터파일마다 얼마나 사용중인지
+o 상태 offline인건 목록에 안뜬다 ㅜㅜ
+o offline -> read write -> read only
 ------------------------------------- 경로
 show parameter db_create_file_dest;
 -- 기본 경로
@@ -11,6 +18,11 @@ select value
 from v$parameter 
 where name = 'db_create_file_dest';
 -- 경로 가져올때
+C:\ORACLEXE\APP\ORACLE\PRODUCT\11.2.0\SERVER\DATABASE\YJ04.dbf
+-- 경로 지정 안하니까 여기에 저장되었다
+------------------------------------- 데이터파일 조회
+file번호로 조인
+
 ------------------------------------- 생성
 CREATE SMALLFILE TABLESPACE "AAA"
 DATAFILE '/u01/app/oracle/oradata/orcl/name' SIZE 1M
@@ -18,14 +30,36 @@ DATAFILE '/u01/app/oracle/oradata/orcl/name' SIZE 1M
 LOGGING EXTENT MANAGEMENT LOCAL SEGMENT SPACE MANAGEMENT AUTO
 ALTER TABLESPACE "AAA" READ ONLY   -> 생성하면서 상태 read only로 만들 때
 
---------------------------------------
-create or replace PROCEDURE p_ts_list (t_list out SYS_REFCURSOR)
+
+CREATE SMALLFILE TEMPORARY TABLESPACE "TEST"
+TEMPFILE '/u01/app/oracle/oradata/orcl/tt' SIZE 100M
+EXTENT MANAGEMENT LOCAL UNIFORM SIZE 1M
+>>>> temporary tablespace 생성
+
+CREATE SMALLFILE UNDO TABLESPACE "TEST"
+DATAFILE '/u01/app/oracle/oradata/orcl/test' SIZE 100M
+RETENTION NOGUARANTEE
+>>>> undo tablespace
+-------------------------------------- 검색 프로시저★★★★★★★
+create or replace PROCEDURE p_ts_list_search (p_name in varchar2, t_list out SYS_REFCURSOR)
 IS
 BEGIN
   OPEN t_list FOR
-    select a.tablespace_name, a.status, sum(b.bytes/1024/1024) as total, sum(c.bytes/1024/1024) as free
-    from dba_tablespaces a, dba_data_files b, dba_free_space c
-    where a.tablespace_name = b.tablespace_name
-      and a.tablespace_name = c.tablespace_name
-    group by a.tablespace_name, a.status;
+    select a.tablespace_name, a.status, a.contents, sum(b.bytes/1024/1024) as total, sum(c.bytes/1024/1024) as free
+    from dba_tablespaces a
+    left outer join dba_free_space c
+          on a.tablespace_name = c.tablespace_name
+    left outer join dba_data_files b 
+          on a.tablespace_name = b.tablespace_name
+    where a.tablespace_name like '%' || p_name || '%'
+    group by a.tablespace_name, a.status, a.contents;
+END p_ts_list_search;
+-------------------------------------- 리스트 출력 프로시저 --> 이제 안씀
+create or replace PROCEDURE p_ts_list (p_name in varchar2, t_list out SYS_REFCURSOR)
+IS
+BEGIN
+  OPEN t_list FOR
+    select tablespace_name, status, contents
+    from dba_tablespaces 
+    where tablespace_name like '%' || p_name || '%';
 END p_ts_list;

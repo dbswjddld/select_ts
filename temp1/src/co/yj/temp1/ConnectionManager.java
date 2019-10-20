@@ -7,9 +7,9 @@ import java.sql.SQLException;
 public class ConnectionManager {
 	public static Connection connect() {
 		Connection conn = null;
-		String url = "jdbc:oracle:thin:@localhost:1521:xe"; // local PC oracle의 주소 
-		String user = "sys as sysdba";
-		String password = "oracle";
+		String url = "jdbc:oracle:thin:@localhost:1523:orcl"; // local PC oracle의 주소 
+		String user = "yj";
+		String password = "yj";
 		
 		try {
 			Class.forName("oracle.jdbc.driver.OracleDriver");
